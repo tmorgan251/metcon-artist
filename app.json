@@ -1,29 +1,49 @@
 {
   "expo": {
-    "name": "CrossFitWOD",
-    "slug": "CrossFitWOD",
+    "name": "MetCon Artist",
+    "slug": "metcon-artist",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#282A36"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.morgansolutions.metconartist"
     },
     "android": {
+      "package": "com.morgansolutions.metconartist",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#282A36"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": []
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/icon.png",
+      "bundler": "metro",
+      "name": "MetCon Artist",
+      "shortName": "MetCon Artist",
+      "description": "Generate CrossFit workouts with different modalities and time domains",
+      "lang": "en",
+      "scope": "/",
+      "startUrl": "/",
+      "display": "standalone",
+      "orientation": "portrait",
+      "themeColor": "#282A36",
+      "backgroundColor": "#282A36"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "fe9acb4d-4b74-4d5e-ae7a-a2edd2aff7a7"
+      }
     }
   }
 }
