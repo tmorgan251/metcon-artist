@@ -4,7 +4,7 @@ const urlsToCache = [
   './index.html',
   './manifest.json',
   './assets/icon.png',
-  './_expo/static/js/web/index-5859449d68e0614bf945039b261e3a6a.js'
+  './_expo/static/js/web/index-c39413bee89ef7445fd85d00c6876e20.js'
 ];
 
 self.addEventListener('install', (event) => {
