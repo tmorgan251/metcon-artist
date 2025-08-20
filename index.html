@@ -1,39 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8" />
-    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>MetCon Artist</title>
-    <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
-    <style id="expo-reset">
-      /* These styles make the body full-height */
-      html,
-      body {
-        height: 100%;
-      }
-      /* These styles disable body scrolling if you are using <ScrollView> */
-      body {
-        overflow: hidden;
-      }
-      /* These styles make the root element full-height */
-      #root {
-        display: flex;
-        height: 100%;
-        flex: 1;
-      }
+    <meta name="theme-color" content="#282A36" />
+    <meta name="description" content="Generate CrossFit workouts with different modalities and time domains" />
+    <link rel="icon" href="./favicon.ico" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background-color: #282A36;
+            color: #F8F8F2;
+            overflow: hidden;
+        }
+        
+        #root {
+            display: flex;
+            height: 100%;
+            flex: 1;
+        }
+        
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .title {
+            font-size: 1.8em;
+            color: #8BE9FD;
+            font-weight: bold;
+        }
+        
+        .menu-button {
+            background: none;
+            border: none;
+            color: #F8F8F2;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 10px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.2em;
+            color: #50FA7B;
+            margin-bottom: 15px;
+        }
+        
+        .structure-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .structure-button {
+            background-color: #44475A;
+            color: #F8F8F2;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        
+        .structure-button.active {
+            background-color: #50FA7B;
+            color: #282A36;
+        }
+        
+        .workout-display {
+            background-color: #44475A;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 200px;
+        }
+        
+        .workout-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 6px;
+            margin: 5px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .badge-time { background-color: #FFB86C; color: #282A36; }
+        .badge-modality { background-color: #8BE9FD; color: #282A36; }
+        .badge-type { background-color: #BD93F9; color: #282A36; }
+        
+        .clear-button {
+            background-color: #6272A4;
+            color: #F8F8F2;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 15px;
+        }
+        
+        .bottom-button {
+            background-color: #50FA7B;
+            color: #282A36;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: auto;
+            align-self: center;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #44475A;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        
+        .modal-title {
+            font-size: 1.5em;
+            color: #8BE9FD;
+            margin-bottom: 20px;
+        }
+        
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #F8F8F2;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
     </style>
-  <meta name="theme-color" content="#282A36">
-<meta name="description" content="Generate CrossFit workouts with different modalities and time domains">
-<link rel="icon" href="./favicon.ico" /></head>
+</head>
+<body>
+    <div id="root">
+        <div class="container">
+            <div class="header">
+                <h1 class="title">MetCon Artist</h1>
+                <button class="menu-button" onclick="showMenu()">☰</button>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Workout Structure</h2>
+                <div class="structure-buttons">
+                    <button class="structure-button active" onclick="selectStructure('single')">Single</button>
+                    <button class="structure-button" onclick="selectStructure('couplet')">Couplet</button>
+                    <button class="structure-button" onclick="selectStructure('triplet')">Triplet</button>
+                    <button class="structure-button" onclick="selectStructure('chipper')">Chipper</button>
+                </div>
+            </div>
+            
+            <div id="workout-display" class="workout-display" style="display: none;">
+                <div id="workout-content"></div>
+                <button class="clear-button" onclick="clearWorkout()">Clear Workout</button>
+            </div>
+            
+            <button class="bottom-button" onclick="generateWorkout()">Generate Workout</button>
+        </div>
+    </div>
+    
+    <!-- Menu Modal -->
+    <div id="menu-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="hideMenu()">×</button>
+            <h2 class="modal-title">Menu</h2>
+            <div style="margin-bottom: 20px;">
+                <button class="structure-button" onclick="showHowToUse()">How To Use</button>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <button class="structure-button" onclick="showLegend()">Legend</button>
+            </div>
+            <div>
+                <button class="structure-button" onclick="showThemes()">Theme</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- How To Use Modal -->
+    <div id="how-to-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="hideHowToUse()">×</button>
+            <h2 class="modal-title">How To Use</h2>
+            <p style="margin-bottom: 15px;">MetCon Artist generates CrossFit workouts based on different structures and modalities.</p>
+            <h3 style="color: #50FA7B; margin-bottom: 10px;">Workout Structures:</h3>
+            <ul style="margin-bottom: 15px; padding-left: 20px;">
+                <li><strong>Single:</strong> One modality (Weightlifting, Gymnastics, or Monostructural)</li>
+                <li><strong>Couplet:</strong> Two modalities combined</li>
+                <li><strong>Triplet:</strong> Three modalities combined</li>
+                <li><strong>Chipper:</strong> Multiple movements in sequence</li>
+            </ul>
+            <h3 style="color: #50FA7B; margin-bottom: 10px;">Example Workouts:</h3>
+            <ul style="padding-left: 20px;">
+                <li>Single Weightlifting: Clean & Jerk EMOM for 10 minutes</li>
+                <li>Couplet: Deadlifts + Pull-ups for time</li>
+                <li>Triplet: Snatch + Handstand Push-ups + Row AMRAP</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Legend Modal -->
+    <div id="legend-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="hideLegend()">×</button>
+            <h2 class="modal-title">Legend</h2>
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #50FA7B; margin-bottom: 10px;">Time Domains:</h3>
+                <div class="workout-badge badge-time">Short (&lt; 8 min)</div>
+                <div class="workout-badge badge-time">Medium (8-20 min)</div>
+                <div class="workout-badge badge-time">Long (20+ min)</div>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <h3 style="color: #50FA7B; margin-bottom: 10px;">Modalities:</h3>
+                <div class="workout-badge badge-modality">Weightlifting (W)</div>
+                <div class="workout-badge badge-modality">Gymnastics (G)</div>
+                <div class="workout-badge badge-modality">Monostructural (M)</div>
+            </div>
+            <div>
+                <h3 style="color: #50FA7B; margin-bottom: 10px;">Workout Types:</h3>
+                <div class="workout-badge badge-type">For Time</div>
+                <div class="workout-badge badge-type">AMRAP</div>
+                <div class="workout-badge badge-type">EMOM</div>
+                <div class="workout-badge badge-type">Benchmark</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Theme Modal -->
+    <div id="theme-modal" class="modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="hideThemes()">×</button>
+            <h2 class="modal-title">Theme</h2>
+            <div style="margin-bottom: 15px;">
+                <button class="structure-button" onclick="setTheme('dracula')">Dracula</button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button class="structure-button" onclick="setTheme('catppuccin-latte')">Catppuccin Latte</button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button class="structure-button" onclick="setTheme('catppuccin-frappe')">Catppuccin Frappe</button>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <button class="structure-button" onclick="setTheme('catppuccin-macchiato')">Catppuccin Macchiato</button>
+            </div>
+            <div>
+                <button class="structure-button" onclick="setTheme('nord')">Nord</button>
+            </div>
+        </div>
+    </div>
 
-  <body>
-    <!-- Use static rendering with Expo Router to support running without JavaScript. -->
-    <noscript>
-      You need to enable JavaScript to run this app.
-    </noscript>
-    <!-- The root element for your Expo app. -->
-    <div id="root"></div>
-  <script src="./_expo/static/js/web/index-5859449d68e0614bf945039b261e3a6a.js" defer></script>
+    <script>
+        let currentStructure = 'single';
+        let currentTheme = 'dracula';
+        
+        function selectStructure(structure) {
+            currentStructure = structure;
+            document.querySelectorAll('.structure-button').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function generateWorkout() {
+            const structures = {
+                single: ['Single'],
+                couplet: ['Couplet'],
+                triplet: ['Triplet'],
+                chipper: ['Chipper']
+            };
+            
+            const modalities = ['Weightlifting', 'Gymnastics', 'Monostructural'];
+            const timeDomains = ['Short', 'Medium', 'Long'];
+            const workoutTypes = ['For Time', 'AMRAP', 'EMOM', 'Benchmark'];
+            
+            const structure = structures[currentStructure][0];
+            const modality = modalities[Math.floor(Math.random() * modalities.length)];
+            const timeDomain = timeDomains[Math.floor(Math.random() * timeDomains.length)];
+            const workoutType = workoutTypes[Math.floor(Math.random() * workoutTypes.length)];
+            
+            const workoutContent = `
+                <h3 style="color: #8BE9FD; margin-bottom: 15px;">Generated Workout</h3>
+                <div class="workout-badge badge-time">${timeDomain}</div>
+                <div class="workout-badge badge-modality">${modality}</div>
+                <div class="workout-badge badge-type">${workoutType}</div>
+                <p style="margin-top: 15px; color: #F8F8F2;">
+                    ${structure} ${modality} workout - ${workoutType} in ${timeDomain.toLowerCase()} time domain
+                </p>
+            `;
+            
+            document.getElementById('workout-content').innerHTML = workoutContent;
+            document.getElementById('workout-display').style.display = 'block';
+        }
+        
+        function clearWorkout() {
+            document.getElementById('workout-display').style.display = 'none';
+        }
+        
+        function showMenu() {
+            document.getElementById('menu-modal').style.display = 'block';
+        }
+        
+        function hideMenu() {
+            document.getElementById('menu-modal').style.display = 'none';
+        }
+        
+        function showHowToUse() {
+            hideMenu();
+            document.getElementById('how-to-modal').style.display = 'block';
+        }
+        
+        function hideHowToUse() {
+            document.getElementById('how-to-modal').style.display = 'none';
+        }
+        
+        function showLegend() {
+            hideMenu();
+            document.getElementById('legend-modal').style.display = 'block';
+        }
+        
+        function hideLegend() {
+            document.getElementById('legend-modal').style.display = 'none';
+        }
+        
+        function showThemes() {
+            hideMenu();
+            document.getElementById('theme-modal').style.display = 'block';
+        }
+        
+        function hideThemes() {
+            document.getElementById('theme-modal').style.display = 'none';
+        }
+        
+        function setTheme(theme) {
+            currentTheme = theme;
+            hideThemes();
+            // Theme switching functionality can be added here
+            alert(`Theme changed to ${theme}!`);
+        }
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
