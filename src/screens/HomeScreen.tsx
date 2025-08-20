@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   SafeAreaView,
   Modal,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -34,6 +35,43 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
   const [showMenuModal, setShowMenuModal] = useState(false);
   const [showThemeModal, setShowThemeModal] = useState(false);
   const [currentTheme, setCurrentTheme] = useState('dracula');
+  const [showInstallButton, setShowInstallButton] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  // PWA Installation Logic
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      // Check if app is already installed
+      const isInstalled = window.matchMedia('(display-mode: standalone)').matches;
+      if (!isInstalled) {
+        setShowInstallButton(true);
+      }
+
+      // Listen for beforeinstallprompt event
+      const handleBeforeInstallPrompt = (e: any) => {
+        e.preventDefault();
+        setDeferredPrompt(e);
+        setShowInstallButton(true);
+      };
+
+      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+      return () => {
+        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      };
+    }
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setShowInstallButton(false);
+        setDeferredPrompt(null);
+      }
+    }
+  };
 
   // Theme color definitions
   const themes = {
@@ -412,6 +450,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               <Text style={styles.menuItemIcon}>🎨</Text>
               <Text style={[styles.menuItemText, { color: theme.foreground }]}>Theme</Text>
             </TouchableOpacity>
+
+            {showInstallButton && (
+              <TouchableOpacity
+                style={[styles.menuItem, { borderBottomColor: theme.selection }]}
+                onPress={handleInstallApp}
+              >
+                <Text style={styles.menuItemIcon}>⬇️</Text>
+                <Text style={[styles.menuItemText, { color: theme.foreground }]}>Install App</Text>
+              </TouchableOpacity>
+            )}
           </TouchableOpacity>
         </TouchableOpacity>
       </Modal>
