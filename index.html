@@ -423,7 +423,22 @@
         // PWA Installation
         let deferredPrompt;
         
+        // Debug PWA status
+        console.log('PWA Debug: Checking manifest...');
+        fetch('/metcon-artist/manifest.json')
+            .then(response => {
+                console.log('PWA Debug: Manifest response:', response.status, response.ok);
+                return response.json();
+            })
+            .then(data => {
+                console.log('PWA Debug: Manifest data:', data);
+            })
+            .catch(error => {
+                console.error('PWA Debug: Manifest error:', error);
+            });
+        
         window.addEventListener('beforeinstallprompt', (e) => {
+            console.log('PWA Debug: beforeinstallprompt event fired');
             // Prevent Chrome 67 and earlier from automatically showing the prompt
             e.preventDefault();
             // Stash the event so it can be triggered later
@@ -432,6 +447,7 @@
             const installButton = document.getElementById('install-button');
             if (installButton) {
                 installButton.style.display = 'block';
+                console.log('PWA Debug: Install button shown');
             }
         });
         
@@ -462,11 +478,37 @@
                 navigator.serviceWorker.register('/metcon-artist/sw.js')
                     .then((registration) => {
                         console.log('SW registered: ', registration);
+                        // Check if PWA criteria are met
+                        checkPWACriteria();
                     })
                     .catch((registrationError) => {
                         console.log('SW registration failed: ', registrationError);
                     });
             });
+        }
+        
+        function checkPWACriteria() {
+            console.log('PWA Debug: Checking PWA criteria...');
+            
+            // Check if manifest is accessible
+            fetch('/metcon-artist/manifest.json')
+                .then(response => {
+                    if (response.ok) {
+                        console.log('PWA Debug: Manifest is accessible');
+                        // Show install button if service worker is registered and manifest is accessible
+                        const installButton = document.getElementById('install-button');
+                        if (installButton && !deferredPrompt) {
+                            installButton.style.display = 'block';
+                            installButton.textContent = '📱 Install App (Manual)';
+                            console.log('PWA Debug: Manual install button shown');
+                        }
+                    } else {
+                        console.log('PWA Debug: Manifest not accessible:', response.status);
+                    }
+                })
+                .catch(error => {
+                    console.error('PWA Debug: Manifest check failed:', error);
+                });
         }
     </script>
 </body>
