@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MetCon Artist Simple</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #282A36;
+            color: #F8F8F2;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            overflow: hidden;
+        }
+        #root {
+            display: flex;
+            height: 100%;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+        }
+        .title {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #8BE9FD;
+        }
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #6272A4;
+        }
+        .button {
+            background-color: #50FA7B;
+            color: #282A36;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        .button:hover {
+            background-color: #69FF94;
+        }
+    </style>
+</head>
+<body>
+    <div id="root">
+        <div class="container">
+            <h1 class="title">MetCon Artist</h1>
+            <p class="subtitle">CrossFit WOD Generator</p>
+            <button class="button" onclick="generateWorkout()">Generate Workout</button>
+            <button class="button" onclick="showMenu()">Menu</button>
+        </div>
+    </div>
+
+    <script>
+        function generateWorkout() {
+            const structures = ['Single', 'Couplet', 'Triplet', 'Chipper'];
+            const modalities = ['Weightlifting', 'Gymnastics', 'Monostructural'];
+            const timeDomains = ['Short', 'Medium', 'Long'];
+            const workoutTypes = ['For Time', 'AMRAP', 'EMOM', 'Benchmark'];
+            
+            const structure = structures[Math.floor(Math.random() * structures.length)];
+            const modality = modalities[Math.floor(Math.random() * modalities.length)];
+            const timeDomain = timeDomains[Math.floor(Math.random() * timeDomains.length)];
+            const workoutType = workoutTypes[Math.floor(Math.random() * workoutTypes.length)];
+            
+            alert(`Generated Workout:\n\nStructure: ${structure}\nModality: ${modality}\nTime Domain: ${timeDomain}\nWorkout Type: ${workoutType}`);
+        }
+        
+        function showMenu() {
+            alert('Menu Options:\n\n• How To Use\n• Legend\n• Theme Settings\n\n(Full functionality coming soon!)');
+        }
+    </script>
+</body>
+</html>

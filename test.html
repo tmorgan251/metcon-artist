@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MetCon Artist Test</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            overflow: hidden;
+        }
+        #root {
+            display: flex;
+            height: 100%;
+            flex: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        // Simple test to see if the bundle loads
+        console.log('Loading bundle...');
+        const script = document.createElement('script');
+        script.src = './_expo/static/js/web/index-5859449d68e0614bf945039b261e3a6a.js';
+        script.onload = () => console.log('Bundle loaded successfully');
+        script.onerror = (e) => console.error('Bundle failed to load:', e);
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
