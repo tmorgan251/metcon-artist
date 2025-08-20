@@ -7,6 +7,11 @@
     <meta name="theme-color" content="#282A36" />
     <meta name="description" content="Generate CrossFit workouts with different modalities and time domains" />
     <link rel="icon" href="./favicon.ico" />
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="MetCon Artist" />
+    <link rel="apple-touch-icon" href="./assets/icon.png" />
     <style>
         * {
             margin: 0;
@@ -389,6 +394,19 @@
                 if (event.target === modal) {
                     modal.style.display = 'none';
                 }
+            });
+        }
+        
+        // Register service worker for PWA functionality
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
             });
         }
     </script>
