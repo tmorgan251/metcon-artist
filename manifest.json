@@ -8,12 +8,51 @@
   "background_color": "#282A36",
   "theme_color": "#282A36",
   "orientation": "portrait",
+  "categories": ["fitness", "health", "sports"],
+  "lang": "en",
+  "dir": "ltr",
   "icons": [
+    {
+      "src": "/metcon-artist/assets/icon.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/metcon-artist/assets/icon.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/metcon-artist/assets/icon.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/metcon-artist/assets/icon.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/metcon-artist/assets/icon.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "/metcon-artist/assets/icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/metcon-artist/assets/icon.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/metcon-artist/assets/icon.png",
