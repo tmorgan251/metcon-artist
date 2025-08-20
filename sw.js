@@ -1,10 +1,10 @@
 const CACHE_NAME = 'metcon-artist-v1';
 const urlsToCache = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/assets/icon.png',
-  '/favicon.ico'
+  '/metcon-artist/',
+  '/metcon-artist/index.html',
+  '/metcon-artist/manifest.json',
+  '/metcon-artist/assets/icon.png',
+  '/metcon-artist/favicon.ico'
 ];
 
 self.addEventListener('install', (event) => {
