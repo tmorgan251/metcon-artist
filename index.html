@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#282A36" />
     <meta name="description" content="Generate CrossFit workouts with different modalities and time domains" />
     <link rel="icon" href="./favicon.ico" />
-    <link rel="manifest" href="/metcon-artist/manifest.json" />
+    <link rel="manifest" href="./manifest.json" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="MetCon Artist" />
@@ -425,7 +425,7 @@
         
         // Debug PWA status
         console.log('PWA Debug: Checking manifest...');
-        fetch('/metcon-artist/manifest.json')
+        fetch('./manifest.json')
             .then(response => {
                 console.log('PWA Debug: Manifest response:', response.status, response.ok);
                 return response.json();
@@ -475,7 +475,7 @@
         // Register service worker for PWA functionality
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/metcon-artist/sw.js')
+                navigator.serviceWorker.register('./sw.js')
                     .then((registration) => {
                         console.log('SW registered: ', registration);
                         // Check if PWA criteria are met
@@ -491,7 +491,7 @@
             console.log('PWA Debug: Checking PWA criteria...');
             
             // Check if manifest is accessible
-            fetch('/metcon-artist/manifest.json')
+            fetch('./manifest.json')
                 .then(response => {
                     if (response.ok) {
                         console.log('PWA Debug: Manifest is accessible');
