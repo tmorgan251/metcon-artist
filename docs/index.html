@@ -5,6 +5,19 @@
     <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <title>MetCon Artist</title>
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#282A36" />
+    <meta name="description" content="Generate CrossFit workouts with different modalities and time domains" />
+    <link rel="manifest" href="./manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="MetCon Artist" />
+    <link rel="apple-touch-icon" href="./assets/icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="MetCon Artist" />
+    <meta name="msapplication-TileColor" content="#282A36" />
+    <meta name="msapplication-TileImage" content="./assets/icon.png" />
+    <meta name="msapplication-config" content="none" />
     <!-- The `react-native-web` recommended style reset: https://necolas.github.io/react-native-web/docs/setup/#root-element -->
     <style id="expo-reset">
       /* These styles make the body full-height */
@@ -23,9 +36,8 @@
         flex: 1;
       }
     </style>
-  <meta name="theme-color" content="#282A36">
-<meta name="description" content="Generate CrossFit workouts with different modalities and time domains">
-<link rel="icon" href="/favicon.ico" /></head>
+    <link rel="icon" href="./favicon.ico" />
+  </head>
 
   <body>
     <!-- Use static rendering with Expo Router to support running without JavaScript. -->
@@ -34,6 +46,21 @@
     </noscript>
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
-  <script src="/_expo/static/js/web/index-c39413bee89ef7445fd85d00c6876e20.js" defer></script>
-</body>
+    <script src="./_expo/static/js/web/index-c39413bee89ef7445fd85d00c6876e20.js" defer></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
+  </body>
 </html>
