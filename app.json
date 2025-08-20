@@ -33,8 +33,6 @@
       "shortName": "MetCon Artist",
       "description": "Generate CrossFit workouts with different modalities and time domains",
       "lang": "en",
-      "scope": "/metcon-artist/",
-      "startUrl": "/metcon-artist/",
       "display": "standalone",
       "orientation": "portrait",
       "themeColor": "#282A36",
