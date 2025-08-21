@@ -29,6 +29,10 @@ export const HowToUseScreen: React.FC<HowToUseScreenProps> = ({ navigation, rout
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={true}
+        bounces={true}
+        alwaysBounceVertical={true}
+        nestedScrollEnabled={false}
+        keyboardShouldPersistTaps="handled"
       >
         <Text style={[styles.sectionTitle, { color: theme.foreground }]}>Getting Started</Text>
         <Text style={[styles.bodyText, { color: theme.foreground }]}>
@@ -115,10 +119,12 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    backgroundColor: 'transparent',
   },
   scrollContent: {
     padding: 20,
     paddingBottom: 40,
+    flexGrow: 1,
   },
   sectionTitle: {
     fontSize: 20,

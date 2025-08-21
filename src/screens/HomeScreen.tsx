@@ -47,29 +47,54 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         setShowInstallButton(true);
       }
 
-      // Listen for beforeinstallprompt event
+      // Listen for beforeinstallprompt event (Chrome/Android)
       const handleBeforeInstallPrompt = (e: any) => {
         e.preventDefault();
         setDeferredPrompt(e);
         setShowInstallButton(true);
       };
 
-      window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      // Check if we're on iOS Safari
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+      
+      if (isIOS && isSafari) {
+        // On iOS Safari, show install button if not in standalone mode
+        if (!isInstalled) {
+          setShowInstallButton(true);
+        }
+      } else {
+        // For other browsers, listen for beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      }
 
       return () => {
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        if (!isIOS || !isSafari) {
+          window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+        }
       };
     }
   }, []);
 
   const handleInstallApp = async () => {
-    if (deferredPrompt) {
+    // Check if we're on iOS Safari
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
+    
+    if (isIOS && isSafari) {
+      // On iOS Safari, show instructions
+      alert('To install this app:\n1. Tap the Share button (square with arrow)\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" to install');
+    } else if (deferredPrompt) {
+      // For Chrome/Android
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
         setShowInstallButton(false);
         setDeferredPrompt(null);
       }
+    } else {
+      // Fallback for other browsers
+      alert('Installation not available in this browser. Try Chrome or Safari.');
     }
   };
 
@@ -117,8 +142,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     'catppuccin-macchiato': {
       background: '#24273A',
       selection: '#363A4F',
-      foreground: '#CAD3F5',
-      comment: '#8C8FA1',
+      foreground: '#F4F4F5', // Improved contrast - lighter foreground
+      comment: '#A5A5AA', // Lighter comment color for better readability
       red: '#ED8796',
       orange: '#F5A97F',
       yellow: '#EED49F',
@@ -130,8 +155,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     nord: {
       background: '#2E3440',
       selection: '#3B4252',
-      foreground: '#ECEFF4',
-      comment: '#616E88',
+      foreground: '#F8F9FA', // Improved contrast - lighter foreground
+      comment: '#8F9BB3', // Lighter comment color for better readability
       red: '#BF616A',
       orange: '#D08770',
       yellow: '#EBCB8B',
@@ -189,7 +214,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         </View>
       </View>
 
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={true}
+        bounces={true}
+        alwaysBounceVertical={true}
+        nestedScrollEnabled={false}
+        keyboardShouldPersistTaps="handled"
+      >
         <View style={styles.structureSection}>
           <Text style={[styles.sectionTitle, { color: theme.foreground }]}>Select Workout Structure</Text>
           
@@ -457,7 +489,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
                 onPress={handleInstallApp}
               >
                 <Text style={styles.menuItemIcon}>⬇️</Text>
-                <Text style={[styles.menuItemText, { color: theme.foreground }]}>Install App</Text>
+                <Text style={[styles.menuItemText, { color: theme.foreground }]}>
+                  {Platform.OS === 'web' && /iPad|iPhone|iPod/.test(navigator.userAgent) 
+                    ? 'Add to Home Screen' 
+                    : 'Install App'}
+                </Text>
               </TouchableOpacity>
             )}
           </TouchableOpacity>

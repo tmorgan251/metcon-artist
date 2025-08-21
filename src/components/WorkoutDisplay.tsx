@@ -37,6 +37,22 @@ export const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({
 }) => {
   const isChipper = workout.structure === 'chipper';
 
+  // Function to determine text color based on background color
+  const getTextColorForBackground = (backgroundColor: string): string => {
+    // Convert hex to RGB
+    const hex = backgroundColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Calculate luminance (perceived brightness)
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Use dark text on light backgrounds, light text on dark backgrounds
+    // Lowered threshold to 0.45 to ensure Nord theme light colors get dark text
+    return luminance > 0.45 ? '#000000' : theme.foreground;
+  };
+
   // Theme-aware color functions
   const getThemeModalityColor = (modality: Modality): string => {
     switch (modality) {
@@ -76,45 +92,62 @@ export const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({
       
       {/* Time Domain and Workout Type Badges */}
       <View style={styles.badgesContainer}>
-        <View
-          style={[
-            styles.timeDomainBadge,
-            { backgroundColor: getThemeTimeDomainColor(workout.timeDomain) }
-          ]}
-        >
-          <Text style={[styles.timeDomainText, { color: theme.foreground }]}>
-            {getTimeDomainDescription(workout.timeDomain)}
-          </Text>
-        </View>
-        
-        <View
-          style={[
-            styles.workoutTypeBadge,
-            { backgroundColor: getThemeWorkoutTypeColor(workout.workoutType) }
-          ]}
-        >
-          <Text style={[styles.workoutTypeText, { color: theme.foreground }]}>
-            {getWorkoutTypeDescription(workout.workoutType)}
-          </Text>
-        </View>
+        {(() => {
+          const timeDomainBg = getThemeTimeDomainColor(workout.timeDomain);
+          const timeDomainTextColor = getTextColorForBackground(timeDomainBg);
+          
+          const workoutTypeBg = getThemeWorkoutTypeColor(workout.workoutType);
+          const workoutTypeTextColor = getTextColorForBackground(workoutTypeBg);
+          
+          return (
+            <>
+              <View
+                style={[
+                  styles.timeDomainBadge,
+                  { backgroundColor: timeDomainBg }
+                ]}
+              >
+                <Text style={[styles.timeDomainText, { color: timeDomainTextColor }]}>
+                  {getTimeDomainDescription(workout.timeDomain)}
+                </Text>
+              </View>
+              
+              <View
+                style={[
+                  styles.workoutTypeBadge,
+                  { backgroundColor: workoutTypeBg }
+                ]}
+              >
+                <Text style={[styles.workoutTypeText, { color: workoutTypeTextColor }]}>
+                  {getWorkoutTypeDescription(workout.workoutType)}
+                </Text>
+              </View>
+            </>
+          );
+        })()}
       </View>
 
       {!isChipper && workout.modalities.length > 0 && (
         <View style={styles.modalitiesContainer}>
-          {workout.modalities.map((modality, index) => (
-            <View
-              key={index}
-              style={[
-                styles.modalityBadge,
-                { backgroundColor: getThemeModalityColor(modality) }
-              ]}
-            >
-              <Text style={[styles.modalityText, { color: theme.foreground }]}>{modality}</Text>
-              <Text style={[styles.modalityDescription, { color: theme.foreground }]}>
-                {getModalityDescription(modality)}
-              </Text>
-            </View>
-          ))}
+          {workout.modalities.map((modality, index) => {
+            const backgroundColor = getThemeModalityColor(modality);
+            const textColor = getTextColorForBackground(backgroundColor);
+            
+            return (
+              <View
+                key={index}
+                style={[
+                  styles.modalityBadge,
+                  { backgroundColor }
+                ]}
+              >
+                <Text style={[styles.modalityText, { color: textColor }]}>{modality}</Text>
+                <Text style={[styles.modalityDescription, { color: textColor }]}>
+                  {getModalityDescription(modality)}
+                </Text>
+              </View>
+            );
+          })}
         </View>
       )}
       
