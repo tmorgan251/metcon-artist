@@ -1,10 +1,10 @@
-const CACHE_NAME = 'metcon-artist-v3';
+const CACHE_NAME = 'metcon-artist-v4';
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
-  './assets/icon.png?v=2',
-  './assets/icon-192.png?v=2',
+  './assets/icon.png?v=3',
+  './assets/icon-192.png?v=3',
   './favicon.ico?v=2',
   './_expo/static/js/web/index-7c99d92a0b8728849ece7306227165b7.js'
 ];
