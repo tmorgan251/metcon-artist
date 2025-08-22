@@ -39,13 +39,13 @@ export const HowToUseScreen: React.FC<HowToUseScreenProps> = ({ navigation, rout
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={true}
-        bounces={Platform.OS !== 'web'}
-        alwaysBounceVertical={Platform.OS !== 'web'}
-        nestedScrollEnabled={Platform.OS !== 'web'}
+        bounces={true}
+        alwaysBounceVertical={true}
+        nestedScrollEnabled={false}
         keyboardShouldPersistTaps="handled"
         scrollEnabled={true}
-        directionalLockEnabled={Platform.OS !== 'web'}
-        overScrollMode={Platform.OS === 'android' ? 'always' : 'auto'}
+        directionalLockEnabled={false}
+        overScrollMode="auto"
       >
           <Text style={[styles.sectionTitle, { color: theme.foreground }]}>Getting Started</Text>
           <Text style={[styles.bodyText, { color: theme.foreground }]}>
