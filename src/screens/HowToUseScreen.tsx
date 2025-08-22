@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
@@ -39,12 +39,13 @@ export const HowToUseScreen: React.FC<HowToUseScreenProps> = ({ navigation, rout
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={true}
-        bounces={true}
-        alwaysBounceVertical={true}
-        nestedScrollEnabled={false}
+        bounces={Platform.OS !== 'web'}
+        alwaysBounceVertical={Platform.OS !== 'web'}
+        nestedScrollEnabled={Platform.OS !== 'web'}
         keyboardShouldPersistTaps="handled"
         scrollEnabled={true}
-        directionalLockEnabled={true}
+        directionalLockEnabled={Platform.OS !== 'web'}
+        overScrollMode={Platform.OS === 'android' ? 'always' : 'auto'}
       >
           <Text style={[styles.sectionTitle, { color: theme.foreground }]}>Getting Started</Text>
           <Text style={[styles.bodyText, { color: theme.foreground }]}>
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 15,
-    paddingTop: 60,
+    paddingTop: Platform.OS === 'web' ? 10 : 60,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -132,10 +133,16 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    ...(Platform.OS === 'web' && {
+      height: '100%',
+    } as any),
   },
   scrollContent: {
     padding: 20,
     paddingBottom: 40,
+    ...(Platform.OS === 'web' && {
+      minHeight: '100%',
+    }),
   },
   sectionTitle: {
     fontSize: 20,
