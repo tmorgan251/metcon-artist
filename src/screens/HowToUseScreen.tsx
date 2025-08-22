@@ -25,10 +25,10 @@ export const HowToUseScreen: React.FC<HowToUseScreenProps> = ({ navigation, rout
       {/* Custom Header with Back Button */}
       <View style={[styles.header, { backgroundColor: theme.selection }]}>
         <TouchableOpacity
-          style={styles.backButton}
+          style={[styles.backButton, { backgroundColor: theme.background, borderColor: theme.comment }]}
           onPress={() => navigation.goBack()}
         >
-          <Text style={[styles.backButtonText, { color: theme.foreground }]}>← Back</Text>
+          <Text style={[styles.backButtonText, { color: theme.foreground }]}>Back</Text>
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.foreground }]}>How To Use</Text>
         <View style={styles.placeholder} />
@@ -117,12 +117,26 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   backButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    minWidth: 90,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 3,
+    borderWidth: 1,
   },
   backButtonText: {
     fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
   },
   headerTitle: {
     fontSize: 20,
