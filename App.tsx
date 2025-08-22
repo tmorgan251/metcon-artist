@@ -76,17 +76,9 @@ export default function App() {
         <Stack.Screen 
           name="HowToUse" 
           component={HowToUseScreen}
-          options={({ route }) => ({
-            headerShown: true,
-            title: 'How To Use',
-            headerStyle: {
-              backgroundColor: route.params?.theme?.selection || '#44475A',
-            },
-            headerTintColor: route.params?.theme?.foreground || '#F8F8F2',
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          })}
+          options={{
+            headerShown: false,
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -8,8 +8,10 @@ import {
   SafeAreaView,
   Modal,
   Platform,
+  Alert,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import * as Clipboard from 'expo-clipboard';
 import { StackScreenProps } from '@react-navigation/stack';
 import { WorkoutStructure, Workout } from '../types/workout';
 import { WorkoutGenerator } from '../utils/workoutGenerator';
@@ -95,6 +97,30 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
     } else {
       // Fallback for other browsers
       alert('Installation not available in this browser. Try Chrome or Safari.');
+    }
+  };
+
+  const handleCopyWorkoutPrompt = async () => {
+    if (!generatedWorkout) return;
+
+    const workoutPrompt = `Generate a detailed CrossFit workout based on this structure:
+
+Structure: ${generatedWorkout.structure}
+Modalities: ${generatedWorkout.modalities.join(', ')}
+Time Domain: ${workoutGenerator.getTimeDomainDescription(generatedWorkout.timeDomain)}
+Workout Type: ${workoutGenerator.getWorkoutTypeDescription(generatedWorkout.workoutType)}
+
+Please provide:
+1. Specific exercises with reps/sets/weights
+2. Workout flow and timing
+3. Scaling options
+4. Any special instructions or tips`;
+
+    try {
+      await Clipboard.setStringAsync(workoutPrompt);
+      Alert.alert('Copied!', 'Workout prompt copied to clipboard. You can now paste it into ChatGPT or another AI.');
+    } catch (error) {
+      Alert.alert('Error', 'Could not copy to clipboard. Please copy manually.');
     }
   };
 
@@ -289,6 +315,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
               getWorkoutTypeDescription={workoutGenerator.getWorkoutTypeDescription.bind(workoutGenerator)}
               getWorkoutTypeColor={workoutGenerator.getWorkoutTypeColor.bind(workoutGenerator)}
               theme={theme}
+              onCopyWorkout={handleCopyWorkoutPrompt}
             />
           </View>
         )}
@@ -713,6 +740,7 @@ const styles = StyleSheet.create({
   },
   workoutSection: {
     marginBottom: 30,
+    marginTop: 20,
   },
   bottomButtonContainer: {
     position: 'absolute',

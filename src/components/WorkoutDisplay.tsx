@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Workout, Modality, TimeDomain, WorkoutType } from '../types/workout';
 
 interface WorkoutDisplayProps {
@@ -23,6 +23,7 @@ interface WorkoutDisplayProps {
     purple: string;
     pink: string;
   };
+  onCopyWorkout?: () => void;
 }
 
 export const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({
@@ -34,6 +35,7 @@ export const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({
   getWorkoutTypeDescription,
   getWorkoutTypeColor,
   theme,
+  onCopyWorkout,
 }) => {
   const isChipper = workout.structure === 'chipper';
 
@@ -88,7 +90,20 @@ export const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({
 
   return (
     <View style={[styles.workoutCard, { backgroundColor: theme.selection }]}>
-      <Text style={[styles.workoutName, { color: theme.foreground }]}>{workout.name}</Text>
+      {/* Clipboard Button Container - Top Left */}
+      <View style={styles.clipboardContainer}>
+        <TouchableOpacity
+          style={[styles.clipboardButton, { backgroundColor: theme.foreground }]}
+          onPress={onCopyWorkout}
+        >
+          <Text style={[styles.clipboardIcon, { color: theme.foreground }]}>📋</Text>
+        </TouchableOpacity>
+      </View>
+      
+      {/* Workout Name Container - Centered */}
+      <View style={styles.workoutNameContainer}>
+        <Text style={[styles.workoutName, { color: theme.foreground }]}>{workout.name}</Text>
+      </View>
       
       {/* Time Domain and Workout Type Badges */}
       <View style={styles.badgesContainer}>
@@ -165,7 +180,7 @@ export const WorkoutDisplay: React.FC<WorkoutDisplayProps> = ({
 
 const styles = StyleSheet.create({
   workoutCard: {
-    padding: 20,
+    padding: 30,
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: {
@@ -175,11 +190,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 3.84,
     elevation: 5,
+    position: 'relative',
   },
   workoutName: {
     fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 15,
     textAlign: 'center',
   },
   badgesContainer: {
@@ -240,5 +255,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 20,
+  },
+  clipboardContainer: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    zIndex: 1,
+  },
+  clipboardButton: {
+    padding: 8,
+    borderRadius: 10,
+  },
+  clipboardIcon: {
+    fontSize: 24,
+  },
+  workoutNameContainer: {
+    marginBottom: 15,
+    paddingTop: 10,
   },
 });
