@@ -6,6 +6,7 @@ import { WorkoutCreationScreen } from './src/screens/WorkoutCreationScreen';
 import { WorkoutHistoryScreen } from './src/screens/WorkoutHistoryScreen';
 import { WorkoutDetailScreen } from './src/screens/WorkoutDetailScreen';
 import { HowToUseScreen } from './src/screens/HowToUseScreen';
+import { ExerciseListScreen } from './src/screens/ExerciseListScreen';
 import { CreateWorkoutRequest } from './src/types/workoutCreation';
 
 type RootStackParamList = {
@@ -14,6 +15,7 @@ type RootStackParamList = {
   WorkoutHistory: undefined;
   WorkoutDetail: { workout: any };
   HowToUse: { theme: any };
+  ExerciseList: { theme: any; lastWorkout: any };
 };
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -76,6 +78,13 @@ export default function App() {
         <Stack.Screen 
           name="HowToUse" 
           component={HowToUseScreen}
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen 
+          name="ExerciseList" 
+          component={ExerciseListScreen}
           options={{
             headerShown: false,
           }}

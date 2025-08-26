@@ -25,6 +25,7 @@ type RootStackParamList = {
   WorkoutHistory: undefined;
   WorkoutDetail: { workout: any };
   HowToUse: { theme: any };
+  ExerciseList: { theme: any; lastWorkout: any };
 };
 
 type HomeScreenProps = StackScreenProps<RootStackParamList, 'Home'>;
@@ -486,6 +487,17 @@ Please provide:
             >
               <Text style={styles.menuItemIcon}>📖</Text>
               <Text style={[styles.menuItemText, { color: theme.foreground }]}>How To Use</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity
+              style={[styles.menuItem, { borderBottomColor: theme.selection }]}
+              onPress={() => {
+                setShowMenuModal(false);
+                navigation.navigate('ExerciseList', { theme, lastWorkout: generatedWorkout });
+              }}
+            >
+              <Text style={styles.menuItemIcon}>💪</Text>
+              <Text style={[styles.menuItemText, { color: theme.foreground }]}>Exercise List</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
