@@ -76,7 +76,9 @@ let needsUpdate = false;
 
 // Remove any duplicate meta tags that Expo might have added (simple ones)
 html = html.replace(/<meta name="theme-color" content="#282A36">\s*/g, '');
+html = html.replace(/<meta name="theme-color" content="#282A36" \/>\s*/g, '');
 html = html.replace(/<meta name="description" content="[^"]*">\s*/g, '');
+html = html.replace(/<meta name="description" content="[^"]*" \/>\s*/g, '');
 html = html.replace(/<link rel="icon" href="[^"]*">\s*/g, '');
 
 // Add PWA meta tags before closing head tag if not already present
