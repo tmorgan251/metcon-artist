@@ -7,7 +7,7 @@ A React Native Android application that generates CrossFit workout structures ba
 ### Workout Structures
 - **Single Structure**: Generates a workout with one modality (W, G, or M) - weighted toward W and M
 - **Couplet**: Generates a workout with two modalities - favors mixed combinations (WG, WM, GM)
-- **Triplet**: Generates a workout with three modalities - heavily favors tri-modal (WGM) combinations + 20% chance for Chipper
+- **Triplet**: Generates a workout with three modalities - heavily favors tri-modal (WGM) combinations + 25% chance for Chipper
 - **Chipper**: Generates a chipper workout (multiple movements in sequence)
 
 **Note**: All probabilities are based on Pat Sherwood's CrossFit Linchpin programming patterns.
