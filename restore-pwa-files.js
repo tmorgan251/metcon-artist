@@ -79,7 +79,11 @@ let needsUpdate = false;
 
 // Add PWA meta tags before closing head tag if not already present
 if (!html.includes('apple-mobile-web-app-capable')) {
-  const pwaTags = `  <!-- PWA Meta Tags -->
+  const pwaTags = `  <!-- Cache Control Meta Tags -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <!-- PWA Meta Tags -->
   <meta name="theme-color" content="${webConfig.themeColor || '#282A36'}" />
   <meta name="description" content="${webConfig.description || ''}" />
   <link rel="manifest" href="./manifest.json" />
@@ -143,6 +147,28 @@ if (needsUpdate) {
   
   fs.writeFileSync(indexPath, html, 'utf8');
   console.log('Updated index.html with PWA meta tags and mobile CSS');
+}
+
+// Add service worker unregistration script if missing (prevents old cached versions from being served)
+if (!html.includes('Unregister any old service workers')) {
+  const unregisterScript = `
+  <!-- Unregister any old service workers to prevent caching issues -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister().then(function(success) {
+            if (success) {
+              console.log('Unregistered old service worker');
+            }
+          });
+        }
+      });
+    }
+  </script>`;
+  html = html.replace('</body>', unregisterScript + '\n</body>');
+  fs.writeFileSync(indexPath, html, 'utf8');
+  console.log('Added service worker unregistration script');
 }
 
 console.log('PWA files restored successfully');

@@ -29,6 +29,10 @@
         flex: 1;
       }
     </style>
+  <!-- Cache Control Meta Tags -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
   <!-- PWA Meta Tags -->
   <meta name="theme-color" content="#282A36" />
   <meta name="description" content="Generate CrossFit workouts with different modalities and time domains" />
@@ -56,5 +60,20 @@
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
   <script src="./_expo/static/js/web/index-f13170d926927e19b48d40a5d77f6ada.js?v=3" defer></script>
+
+  <!-- Unregister any old service workers to prevent caching issues -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister().then(function(success) {
+            if (success) {
+              console.log('Unregistered old service worker');
+            }
+          });
+        }
+      });
+    }
+  </script>
 </body>
 </html>
