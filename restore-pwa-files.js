@@ -74,12 +74,8 @@ const indexPath = path.join(docsDir, 'index.html');
 let html = fs.readFileSync(indexPath, 'utf8');
 let needsUpdate = false;
 
-// Remove any duplicate meta tags that Expo might have added (simple ones)
-html = html.replace(/<meta name="theme-color" content="#282A36">\s*/g, '');
-html = html.replace(/<meta name="theme-color" content="#282A36" \/>\s*/g, '');
-html = html.replace(/<meta name="description" content="[^"]*">\s*/g, '');
-html = html.replace(/<meta name="description" content="[^"]*" \/>\s*/g, '');
-html = html.replace(/<link rel="icon" href="[^"]*">\s*/g, '');
+// Remove any duplicate meta tags that Expo might have added (simple ones) after PWA tags
+// This needs to happen after we've added PWA tags, so we'll do it at the end
 
 // Add PWA meta tags before closing head tag if not already present
 if (!html.includes('apple-mobile-web-app-capable')) {
@@ -122,6 +118,18 @@ if (!html.includes('Enable scrolling for mobile')) {
 }
 
 if (needsUpdate) {
+  // Remove duplicate meta tags that might appear after PWA tags section
+  // Remove simple meta tags that duplicate PWA ones
+  const afterPwaTags = html.split('<!-- Favicon with cache busting -->');
+  if (afterPwaTags.length > 1) {
+    // Remove duplicates in the section after PWA tags
+    afterPwaTags[1] = afterPwaTags[1]
+      .replace(/<meta name="theme-color"[^>]*>\s*/g, '')
+      .replace(/<meta name="description"[^>]*>\s*/g, '')
+      .replace(/<link rel="icon" href="[^"]*">\s*/g, '');
+    html = afterPwaTags.join('<!-- Favicon with cache busting -->');
+  }
+  
   fs.writeFileSync(indexPath, html, 'utf8');
   console.log('Updated index.html with PWA meta tags and mobile CSS');
 }
