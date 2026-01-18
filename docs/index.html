@@ -55,15 +55,34 @@
   <body>
   <!-- Unregister any old service workers to prevent caching issues -->
   <!-- This must run BEFORE the main script loads to prevent service worker from intercepting -->
+  <!-- Mobile browsers cache more aggressively, so we need comprehensive clearing -->
   <script>
     (function() {
+      // Clear all caches first (more aggressive for mobile)
+      if ('caches' in window) {
+        caches.keys().then(function(cacheNames) {
+          return Promise.all(
+            cacheNames.map(function(cacheName) {
+              console.log('Deleting cache:', cacheName);
+              return caches.delete(cacheName);
+            })
+          );
+        }).catch(function(error) {
+          console.error('Error clearing caches:', error);
+        });
+      }
+      
+      // Unregister all service workers immediately
       if ('serviceWorker' in navigator) {
-        // Unregister all service workers immediately
+        // Method 1: Get all registrations and unregister
         navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          console.log('Found', registrations.length, 'service worker(s) to unregister');
           for(let registration of registrations) {
             registration.unregister().then(function(success) {
               if (success) {
                 console.log('Unregistered old service worker:', registration.scope);
+              } else {
+                console.warn('Failed to unregister service worker:', registration.scope);
               }
             }).catch(function(error) {
               console.error('Error unregistering service worker:', error);
@@ -72,15 +91,32 @@
         }).catch(function(error) {
           console.error('Error getting service worker registrations:', error);
         });
-        // Also try to unregister by scope in case getRegistrations fails
+        
+        // Method 2: Also try to unregister by current scope (mobile fallback)
         navigator.serviceWorker.getRegistration().then(function(registration) {
           if (registration) {
             registration.unregister().then(function(success) {
               if (success) {
-                console.log('Unregistered service worker by scope:', registration.scope);
+                console.log('Unregistered service worker by current scope:', registration.scope);
               }
+            }).catch(function(error) {
+              console.error('Error unregistering service worker by scope:', error);
             });
           }
+        });
+        
+        // Method 3: Try to unregister by all possible scopes (for mobile browsers)
+        var scopes = ['./', '/', '/metcon-artist/', '/metcon-artist'];
+        scopes.forEach(function(scope) {
+          navigator.serviceWorker.getRegistration(scope).then(function(registration) {
+            if (registration) {
+              registration.unregister().then(function(success) {
+                if (success) {
+                  console.log('Unregistered service worker for scope:', scope);
+                }
+              });
+            }
+          });
         });
       }
     })();
