@@ -72,6 +72,12 @@ console.log('Created manifest.json');
 // Update index.html to include PWA meta tags if missing
 const indexPath = path.join(docsDir, 'index.html');
 let html = fs.readFileSync(indexPath, 'utf8');
+let needsUpdate = false;
+
+// Remove any duplicate meta tags that Expo might have added (simple ones)
+html = html.replace(/<meta name="theme-color" content="#282A36">\s*/g, '');
+html = html.replace(/<meta name="description" content="[^"]*">\s*/g, '');
+html = html.replace(/<link rel="icon" href="[^"]*">\s*/g, '');
 
 // Add PWA meta tags before closing head tag if not already present
 if (!html.includes('apple-mobile-web-app-capable')) {
@@ -93,30 +99,29 @@ if (!html.includes('apple-mobile-web-app-capable')) {
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon.ico?v=2" />
   <link rel="icon" type="image/png" sizes="16x16" href="./favicon.ico?v=2" />`;
 
-  // Find the style tag and insert PWA tags after it
+  // Find the closing style tag and insert PWA tags right after it
   html = html.replace(
-    /<\/style>\s*<meta name="theme-color"/,
-    `</style>\n${pwaTags.replace(/\n/g, '\n  ')}`
+    /<\/style>/,
+    `</style>\n${pwaTags}`
   );
-  
-  // If no theme-color meta found, add after style tag
-  if (!html.includes('theme-color')) {
-    html = html.replace(
-      /<\/style>/,
-      `</style>\n${pwaTags.replace(/\n/g, '\n  ')}`
-    );
-  }
+  needsUpdate = true;
+} else {
+  // Still remove duplicates even if PWA tags exist
+  needsUpdate = true;
+}
 
-  // Add mobile scrolling CSS if missing
-  if (!html.includes('Enable scrolling for mobile')) {
-    html = html.replace(
-      /(body \{[^}]*overflow: hidden;[^}]*\})/,
-      `$1\n      /* Enable scrolling for mobile web browsers */\n      @media (max-width: 768px) {\n        body {\n          overflow: auto;\n        }\n      }`
-    );
-  }
+// Add mobile scrolling CSS if missing
+if (!html.includes('Enable scrolling for mobile')) {
+  html = html.replace(
+    /(body \{[^}]*overflow: hidden;[^}]*\})/,
+    `$1\n      /* Enable scrolling for mobile web browsers */\n      @media (max-width: 768px) {\n        body {\n          overflow: auto;\n        }\n      }`
+  );
+  needsUpdate = true;
+}
 
+if (needsUpdate) {
   fs.writeFileSync(indexPath, html, 'utf8');
-  console.log('Added PWA meta tags to index.html');
+  console.log('Updated index.html with PWA meta tags and mobile CSS');
 }
 
 console.log('PWA files restored successfully');
