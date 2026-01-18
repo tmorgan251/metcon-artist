@@ -118,24 +118,27 @@ if (!html.includes('Enable scrolling for mobile')) {
 }
 
 if (needsUpdate) {
-  // Remove duplicate meta tags that might appear after PWA tags section (before </head>)
-  // Find everything between PWA tags section and </head> and remove duplicates
-  const pwaSectionEnd = html.indexOf('<!-- Favicon with cache busting -->');
+  // Remove duplicate meta tags that Expo adds after PWA tags (before </head>)
+  // Find everything after our last favicon link and before </head>
+  const lastFaviconLink = html.lastIndexOf('<link rel="icon" type="image/png" sizes="16x16"');
   const headEnd = html.indexOf('</head>');
   
-  if (pwaSectionEnd !== -1 && headEnd !== -1 && headEnd > pwaSectionEnd) {
-    const beforePwa = html.substring(0, pwaSectionEnd);
-    const pwaSection = html.substring(pwaSectionEnd, html.indexOf('</head>', pwaSectionEnd));
-    const afterHead = html.substring(headEnd);
-    
-    // Remove duplicates from the section between PWA tags and </head>
-    let cleanPwaSection = pwaSection
-      .replace(/<meta name="theme-color"[^>]*>\s*/gi, '')
-      .replace(/<meta name="description"[^>]*>\s*/gi, '')
-      .replace(/<link rel="icon" href="[^"]*"[^>]*>\s*/gi, '')
-      .replace(/<link rel="icon"[^>]*href="[^"]*"[^>]*>\s*/gi, '');
-    
-    html = beforePwa + cleanPwaSection + afterHead;
+  if (lastFaviconLink !== -1 && headEnd !== -1 && headEnd > lastFaviconLink) {
+    // Find the end of our last favicon link
+    const afterLastLink = html.indexOf('>', lastFaviconLink);
+    if (afterLastLink !== -1) {
+      const beforeSection = html.substring(0, afterLastLink + 1);
+      const afterSection = html.substring(afterLastLink + 1, headEnd);
+      const afterHead = html.substring(headEnd);
+      
+      // Remove duplicates from the section between our favicon links and </head>
+      const cleanedAfter = afterSection
+        .replace(/<meta name="theme-color"[^>]*>\s*/gi, '')
+        .replace(/<meta name="description"[^>]*>\s*/gi, '')
+        .replace(/<link rel="icon"[^>]*>\s*/gi, '');
+      
+      html = beforeSection + cleanedAfter + afterHead;
+    }
   }
   
   fs.writeFileSync(indexPath, html, 'utf8');
