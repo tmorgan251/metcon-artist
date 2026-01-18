@@ -21,6 +21,9 @@ let html = fs.readFileSync(indexPath, 'utf8');
 html = html.replace(/href="\/favicon\.ico"/g, 'href="./favicon.ico"');
 html = html.replace(/src="\/_expo\//g, 'src="./_expo/');
 
+// Add cache-busting version parameter to script tag if not present
+html = html.replace(/(src="\.\/_expo\/static\/js\/web\/index-[^"]+\.js")(\s|>)/g, '$1?v=3"$2');
+
 fs.writeFileSync(indexPath, html, 'utf8');
 console.log('Fixed paths in index.html for GitHub Pages');
 
