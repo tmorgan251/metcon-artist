@@ -5,10 +5,12 @@ A React Native Android application that generates CrossFit workout structures ba
 ## Features
 
 ### Workout Structures
-- **Single Structure**: Generates a workout with one modality (W, G, or M)
-- **Couplet**: Generates a workout with two modalities (all 9 possible combinations: WW, WG, WM, GW, GG, GM, MW, MG, MM)
-- **Triplet**: Generates a workout with three modalities (all 27 possible combinations) + 20% chance for Chipper
+- **Single Structure**: Generates a workout with one modality (W, G, or M) - weighted toward W and M
+- **Couplet**: Generates a workout with two modalities - favors mixed combinations (WG, WM, GM)
+- **Triplet**: Generates a workout with three modalities - heavily favors tri-modal (WGM) combinations + 12% chance for Chipper
 - **Chipper**: Generates a chipper workout (multiple movements in sequence)
+
+**Note**: All probabilities are based on Pat Sherwood's CrossFit Linchpin programming patterns.
 
 ### Modalities
 - **W (Weightlifting)**: Olympic lifts, powerlifting movements, kettlebell work
@@ -22,56 +24,59 @@ A React Native Android application that generates CrossFit workout structures ba
 
 ### Workout Types
 - **Sets**: Multiple sets of the same movement
-- **EMOM**: Every Minute On the Minute
+- **EMOM**: Every Minute On the Minute (or E2MOM - user chooses)
 - **Benchmark**: Named CrossFit workouts
 - **For Time/Reps**: Complete for time or reps
-- **For Time**: Complete for time
+- **For Time**: Complete for time (or not for time - user chooses)
+- **Rounds for Time**: Multiple rounds completed for time
 - **AMRAP**: As Many Rounds/Reps As Possible
 - **Intervals**: Work/rest intervals
 - **Skill**: Skill development and practice
 
 ## How It Works
 
-1. **Single Structure**: Randomly selects one modality from W, G, or M
-2. **Couplet**: Randomly selects from all 9 possible double combinations (WW, WG, WM, GW, GG, GM, MW, MG, MM)
-3. **Triplet**: Randomly selects from all 27 possible triple combinations with a 20% chance of generating a Chipper instead
+Based on CrossFit Linchpin programming patterns:
+
+1. **Single Structure**: Weighted selection - W: 52%, M: 43%, G: 5% (pure gymnastics singlets are rare)
+2. **Couplet**: Weighted selection favoring mixed modalities - WG: 25%, WM: 22%, GM: 18%, GW: 12%, MW: 11%, MG: 9%, WW: 2%, GG: 1%, MM: 0%
+3. **Triplet**: Weighted selection heavily favoring tri-modal combinations - WGM variations: ~40%, GGG: ~9%, WWW: ~5.5%, MMM: ~3%, with 12% chance of Chipper
 4. **Chipper**: Generates a chipper workout without specific modality combinations
 
 ### Time Domain Distribution
-Each workout structure has specific time domain weights:
+Each workout structure has specific time domain weights based on Linchpin patterns:
 
-- **Single**: Short 5%, Medium 45%, Long 50%
-- **Couplet**: Short 25%, Medium 50%, Long 25%
-- **Triplet**: Short 5%, Medium 35%, Long 60%
+- **Single**: Short 8%, Medium 50%, Long 42%
+- **Couplet**: Short 15%, Medium 50%, Long 35%
+- **Triplet**: Short 5%, Medium 45%, Long 50%
 - **Chipper**: Always Long (100%)
 
 ### Workout Type Distribution
-Workout types are generated based on modality and time domain:
+Workout types are generated based on modality and time domain, following Linchpin patterns:
 
 **Weightlifting (W):**
-- Short: Sets 45%, EMOM 35%, Benchmark 10%, For Time/Reps 10%
-- Medium: Sets 65%, EMOM 20%, Benchmark 10%, For Time/Reps 5%
-- Long: Sets 50%, EMOM 35%, Benchmark 5%, For Time/Reps 10%
+- Short: Sets 40%, EMOM 45% (includes E2MOM), Benchmark 10%, For Time/Reps 5%
+- Medium: Sets 50%, EMOM 35% (includes E2MOM), Benchmark 10%, For Time/Reps 5%
+- Long: Sets 35%, EMOM 55% (includes E2MOM), Benchmark 5%, For Time/Reps 5%
 
 **Gymnastics (G):**
-- Short: For Time 35%, AMRAP 15%, Intervals 15%, EMOM 20%, Benchmark 5%, Skill 10%
-- Medium: For Time 30%, AMRAP 35%, Intervals 10%, EMOM 10%, Benchmark 5%, Skill 10%
-- Long: For Time 20%, AMRAP 40%, Intervals 15%, EMOM 10%, Benchmark 5%, Skill 10%
+- Short: For Time 40% (includes for_time_or_not), Rounds for Time 10%, AMRAP 15%, Intervals 10%, EMOM 20% (includes E2MOM), Benchmark 5%, Skill 5%
+- Medium: For Time 27% (includes for_time_or_not), Rounds for Time 15%, AMRAP 25%, Intervals 8%, EMOM 15% (includes E2MOM), Benchmark 5%, Skill 5%
+- Long: For Time 20%, Rounds for Time 15%, AMRAP 30%, Intervals 12%, EMOM 15% (includes E2MOM), Benchmark 5%, Skill 3%
 
 **Monostructural (M):**
-- Short: Benchmark 45%, Intervals 45%, For Time 10%
-- Medium: Benchmark 60%, Intervals 30%, For Time 10%
-- Long: Benchmark 70%, Intervals 25%, For Time 5%
+- Short: Benchmark 40%, Intervals 40%, For Time 15% (includes not_for_time), Rounds for Time 5%
+- Medium: Benchmark 50%, Intervals 30%, For Time 15% (includes not_for_time), Rounds for Time 5%
+- Long: Benchmark 55%, Intervals 30%, For Time 10% (includes not_for_time), Rounds for Time 5%
 
 **Couplet:**
-- Short: For Time 65%, AMRAP 25%, Intervals 5%, Benchmark 5%
-- Medium: For Time 50%, AMRAP 40%, Intervals 5%, Benchmark 5%
-- Long: For Time 25%, AMRAP 60%, Intervals 10%, Benchmark 5%
+- Short: For Time 40%, Rounds for Time 20%, AMRAP 20%, Intervals 5%, EMOM 10% (includes E2MOM), Benchmark 5%
+- Medium: For Time 30%, Rounds for Time 20%, AMRAP 30%, Intervals 5%, EMOM 13% (includes E2MOM), Benchmark 2%
+- Long: For Time 20%, Rounds for Time 15%, AMRAP 45%, Intervals 8%, EMOM 10% (includes E2MOM), Benchmark 2%
 
 **Triplet:**
-- Short: For Time 50%, AMRAP 35%, Intervals 10%, Benchmark 5%
-- Medium: For Time 30%, AMRAP 55%, Intervals 10%, Benchmark 5%
-- Long: For Time 15%, AMRAP 70%, Intervals 10%, Benchmark 5%
+- Short: For Time 35%, Rounds for Time 25%, AMRAP 25%, Intervals 5%, EMOM 7% (includes E2MOM), Benchmark 3%
+- Medium: For Time 25%, Rounds for Time 20%, AMRAP 35%, Intervals 8%, EMOM 10% (includes E2MOM), Benchmark 2%
+- Long: For Time 20%, Rounds for Time 15%, AMRAP 45%, Intervals 10%, EMOM 9% (includes E2MOM), Benchmark 1%
 
 ## Getting Started
 
