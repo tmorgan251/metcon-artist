@@ -149,27 +149,49 @@ if (needsUpdate) {
   console.log('Updated index.html with PWA meta tags and mobile CSS');
 }
 
-// Add service worker unregistration script if missing (prevents old cached versions from being served)
-if (!html.includes('Unregister any old service workers')) {
-  const unregisterScript = `
-  <!-- Unregister any old service workers to prevent caching issues -->
+// Add service worker unregistration script immediately after opening body tag
+// This runs synchronously before any other scripts to prevent service workers from intercepting requests
+// First, remove any existing service worker unregistration scripts
+html = html.replace(/<!-- Unregister any old service workers[\s\S]*?<\/script>\s*/g, '');
+
+const unregisterScript = `  <!-- Unregister any old service workers to prevent caching issues -->
+  <!-- This must run BEFORE the main script loads to prevent service worker from intercepting -->
   <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
-          registration.unregister().then(function(success) {
-            if (success) {
-              console.log('Unregistered old service worker');
-            }
-          });
-        }
-      });
-    }
-  </script>`;
-  html = html.replace('</body>', unregisterScript + '\n</body>');
-  fs.writeFileSync(indexPath, html, 'utf8');
-  console.log('Added service worker unregistration script');
-}
+    (function() {
+      if ('serviceWorker' in navigator) {
+        // Unregister all service workers immediately
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister().then(function(success) {
+              if (success) {
+                console.log('Unregistered old service worker:', registration.scope);
+              }
+            }).catch(function(error) {
+              console.error('Error unregistering service worker:', error);
+            });
+          }
+        }).catch(function(error) {
+          console.error('Error getting service worker registrations:', error);
+        });
+        // Also try to unregister by scope in case getRegistrations fails
+        navigator.serviceWorker.getRegistration().then(function(registration) {
+          if (registration) {
+            registration.unregister().then(function(success) {
+              if (success) {
+                console.log('Unregistered service worker by scope:', registration.scope);
+              }
+            });
+          }
+        });
+      }
+    })();
+  </script>
+`;
+// Insert right after <body> tag, before any other content
+html = html.replace(/<body>/, '<body>' + '\n' + unregisterScript);
+
+fs.writeFileSync(indexPath, html, 'utf8');
+console.log('Added service worker unregistration script at the top of body');
 
 console.log('PWA files restored successfully');
 

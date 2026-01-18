@@ -53,6 +53,39 @@
   </head>
 
   <body>
+  <!-- Unregister any old service workers to prevent caching issues -->
+  <!-- This must run BEFORE the main script loads to prevent service worker from intercepting -->
+  <script>
+    (function() {
+      if ('serviceWorker' in navigator) {
+        // Unregister all service workers immediately
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister().then(function(success) {
+              if (success) {
+                console.log('Unregistered old service worker:', registration.scope);
+              }
+            }).catch(function(error) {
+              console.error('Error unregistering service worker:', error);
+            });
+          }
+        }).catch(function(error) {
+          console.error('Error getting service worker registrations:', error);
+        });
+        // Also try to unregister by scope in case getRegistrations fails
+        navigator.serviceWorker.getRegistration().then(function(registration) {
+          if (registration) {
+            registration.unregister().then(function(success) {
+              if (success) {
+                console.log('Unregistered service worker by scope:', registration.scope);
+              }
+            });
+          }
+        });
+      }
+    })();
+  </script>
+
     <!-- Use static rendering with Expo Router to support running without JavaScript. -->
     <noscript>
       You need to enable JavaScript to run this app.
@@ -60,20 +93,5 @@
     <!-- The root element for your Expo app. -->
     <div id="root"></div>
   <script src="./_expo/static/js/web/index-f13170d926927e19b48d40a5d77f6ada.js?v=3" defer></script>
-
-  <!-- Unregister any old service workers to prevent caching issues -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(function(registrations) {
-        for(let registration of registrations) {
-          registration.unregister().then(function(success) {
-            if (success) {
-              console.log('Unregistered old service worker');
-            }
-          });
-        }
-      });
-    }
-  </script>
 </body>
 </html>
