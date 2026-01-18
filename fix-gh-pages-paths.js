@@ -24,3 +24,10 @@ html = html.replace(/src="\/_expo\//g, 'src="./_expo/');
 fs.writeFileSync(indexPath, html, 'utf8');
 console.log('Fixed paths in index.html for GitHub Pages');
 
+// Ensure .nojekyll file exists so GitHub Pages serves files/folders starting with _
+const nojekyllPath = path.join(__dirname, 'docs', '.nojekyll');
+if (!fs.existsSync(nojekyllPath)) {
+  fs.writeFileSync(nojekyllPath, '');
+  console.log('Created .nojekyll file for GitHub Pages');
+}
+
