@@ -118,16 +118,24 @@ if (!html.includes('Enable scrolling for mobile')) {
 }
 
 if (needsUpdate) {
-  // Remove duplicate meta tags that might appear after PWA tags section
-  // Remove simple meta tags that duplicate PWA ones
-  const afterPwaTags = html.split('<!-- Favicon with cache busting -->');
-  if (afterPwaTags.length > 1) {
-    // Remove duplicates in the section after PWA tags
-    afterPwaTags[1] = afterPwaTags[1]
-      .replace(/<meta name="theme-color"[^>]*>\s*/g, '')
-      .replace(/<meta name="description"[^>]*>\s*/g, '')
-      .replace(/<link rel="icon" href="[^"]*">\s*/g, '');
-    html = afterPwaTags.join('<!-- Favicon with cache busting -->');
+  // Remove duplicate meta tags that might appear after PWA tags section (before </head>)
+  // Find everything between PWA tags section and </head> and remove duplicates
+  const pwaSectionEnd = html.indexOf('<!-- Favicon with cache busting -->');
+  const headEnd = html.indexOf('</head>');
+  
+  if (pwaSectionEnd !== -1 && headEnd !== -1 && headEnd > pwaSectionEnd) {
+    const beforePwa = html.substring(0, pwaSectionEnd);
+    const pwaSection = html.substring(pwaSectionEnd, html.indexOf('</head>', pwaSectionEnd));
+    const afterHead = html.substring(headEnd);
+    
+    // Remove duplicates from the section between PWA tags and </head>
+    let cleanPwaSection = pwaSection
+      .replace(/<meta name="theme-color"[^>]*>\s*/gi, '')
+      .replace(/<meta name="description"[^>]*>\s*/gi, '')
+      .replace(/<link rel="icon" href="[^"]*"[^>]*>\s*/gi, '')
+      .replace(/<link rel="icon"[^>]*href="[^"]*"[^>]*>\s*/gi, '');
+    
+    html = beforePwa + cleanPwaSection + afterHead;
   }
   
   fs.writeFileSync(indexPath, html, 'utf8');
