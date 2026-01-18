@@ -90,11 +90,11 @@ if (!html.includes('apple-mobile-web-app-capable')) {
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="${webConfig.name || appJson.expo.name}" />
-  <link rel="apple-touch-icon" href="./assets/icon.png?v=4" />
+      <link rel="apple-touch-icon" href="./assets/icon.png?v=5" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="application-name" content="${webConfig.name || appJson.expo.name}" />
   <meta name="msapplication-TileColor" content="${webConfig.themeColor || '#282A36'}" />
-  <meta name="msapplication-TileImage" content="./assets/icon.png?v=4" />
+      <meta name="msapplication-TileImage" content="./assets/icon.png?v=5" />
   <meta name="msapplication-config" content="none" />
   <!-- Favicon with cache busting -->
   <link rel="icon" type="image/x-icon" href="./favicon.ico?v=2" />

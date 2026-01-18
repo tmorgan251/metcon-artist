@@ -384,16 +384,16 @@ export class WorkoutGenerator {
   }
 
   private generateSingleWorkout(): Workout {
-    // Linchpin patterns: W: ~52%, M: ~43%, G: ~5% (pure gymnastics singlets are very rare)
+    // Evenly distributed: 33.33% each (W, G, M)
     const random = Math.random();
     let modality: Modality;
     
-    if (random < 0.52) {
+    if (random < 0.333333) {
       modality = 'W';
-    } else if (random < 0.95) {
-      modality = 'M';
-    } else {
+    } else if (random < 0.666667) {
       modality = 'G';
+    } else {
+      modality = 'M';
     }
     
     const timeDomain = this.generateTimeDomain('single');
@@ -409,27 +409,29 @@ export class WorkoutGenerator {
   }
 
   private generateCoupletWorkout(): Workout {
-    // Linchpin patterns for couplets (all 9 combinations = 100%):
-    // WG: 25%, GW: 12%, WM: 22%, MW: 11%, GM: 18%, MG: 9%, WW: 2%, GG: 1%, MM: 0%
+    // Evenly distributed: 9 combinations = ~11.11% each (1/9 = 0.111111)
+    // All couplet combinations: WG, GW, WM, MW, GM, MG, WW, GG, MM
     const random = Math.random();
     let selectedCombination: Modality[];
     
-    if (random < 0.25) {
+    if (random < 0.111111) {
       selectedCombination = ['W', 'G'];
-    } else if (random < 0.37) {
+    } else if (random < 0.222222) {
       selectedCombination = ['G', 'W'];
-    } else if (random < 0.59) {
+    } else if (random < 0.333333) {
       selectedCombination = ['W', 'M'];
-    } else if (random < 0.70) {
+    } else if (random < 0.444444) {
       selectedCombination = ['M', 'W'];
-    } else if (random < 0.88) {
+    } else if (random < 0.555556) {
       selectedCombination = ['G', 'M'];
-    } else if (random < 0.97) {
+    } else if (random < 0.666667) {
       selectedCombination = ['M', 'G'];
-    } else if (random < 0.99) {
+    } else if (random < 0.777778) {
       selectedCombination = ['W', 'W'];
+    } else if (random < 0.888889) {
+      selectedCombination = ['G', 'G'];
     } else {
-      selectedCombination = ['G', 'G']; // MM is 0% so we skip it and use GG as the catch-all
+      selectedCombination = ['M', 'M'];
     }
     
     const timeDomain = this.generateTimeDomain('couplet', selectedCombination);
@@ -459,78 +461,75 @@ export class WorkoutGenerator {
       };
     }
     
-    // Linchpin patterns for triplets (all 27 combinations = 100%):
-    // Tri-modal WGM (6 combos): ~6.67% each = 40% total
-    // Pure GGG: ~9%, Pure WWW: ~5.5%, Pure MMM: ~3%
-    // Two W + one other (6 combos): ~3.33% each = 20% total
-    // Two G + one other (6 combos): ~2% each = 12% total  
-    // Two M + one other (6 combos): ~1.75% each = 10.5% total
+    // Evenly distributed: 27 combinations = ~3.70% each (1/27 = 0.037037)
+    // All triplet combinations: WGM, WMG, GWM, GMW, MWG, MGW, WWW, GGG, MMM,
+    // WWG, WWM, WGW, WMW, GWW, MWW, GGW, GGM, GWG, WGG, GMG, MGG, MMW, MMG, MWM, WMM, MGM, GMM
     const random = Math.random();
     let selectedCombination: Modality[];
     
-    // Tri-modal combinations (40% total - ~6.67% each)
-    if (random < 0.0667) {
+    // Tri-modal combinations (6 combinations)
+    if (random < 0.037037) {
       selectedCombination = ['W', 'G', 'M'];
-    } else if (random < 0.1334) {
+    } else if (random < 0.074074) {
       selectedCombination = ['W', 'M', 'G'];
-    } else if (random < 0.2001) {
+    } else if (random < 0.111111) {
       selectedCombination = ['G', 'W', 'M'];
-    } else if (random < 0.2668) {
+    } else if (random < 0.148148) {
       selectedCombination = ['G', 'M', 'W'];
-    } else if (random < 0.3335) {
+    } else if (random < 0.185185) {
       selectedCombination = ['M', 'W', 'G'];
-    } else if (random < 0.4002) {
+    } else if (random < 0.222222) {
       selectedCombination = ['M', 'G', 'W'];
     }
-    // Pure combinations (17.5% total)
-    else if (random < 0.4902) {
-      selectedCombination = ['G', 'G', 'G']; // ~9%
-    } else if (random < 0.5452) {
-      selectedCombination = ['W', 'W', 'W']; // ~5.5%
-    } else if (random < 0.5752) {
-      selectedCombination = ['M', 'M', 'M']; // ~3%
+    // Pure combinations (3 combinations)
+    else if (random < 0.259259) {
+      selectedCombination = ['W', 'W', 'W'];
+    } else if (random < 0.296296) {
+      selectedCombination = ['G', 'G', 'G'];
+    } else if (random < 0.333333) {
+      selectedCombination = ['M', 'M', 'M'];
     }
-    // Two W + one other (20% total - 6 combinations, ~3.33% each)
-    else if (random < 0.6085) {
-      selectedCombination = ['W', 'W', 'G']; // ~3.33%
-    } else if (random < 0.6418) {
-      selectedCombination = ['W', 'W', 'M']; // ~3.33%
-    } else if (random < 0.6751) {
-      selectedCombination = ['W', 'G', 'W']; // ~3.33%
-    } else if (random < 0.7084) {
-      selectedCombination = ['W', 'M', 'W']; // ~3.33%
-    } else if (random < 0.7417) {
-      selectedCombination = ['G', 'W', 'W']; // ~3.33%
-    } else if (random < 0.7750) {
-      selectedCombination = ['M', 'W', 'W']; // ~3.33%
+    // Two W + one other (6 combinations)
+    else if (random < 0.370370) {
+      selectedCombination = ['W', 'W', 'G'];
+    } else if (random < 0.407407) {
+      selectedCombination = ['W', 'W', 'M'];
+    } else if (random < 0.444444) {
+      selectedCombination = ['W', 'G', 'W'];
+    } else if (random < 0.481481) {
+      selectedCombination = ['W', 'M', 'W'];
+    } else if (random < 0.518518) {
+      selectedCombination = ['G', 'W', 'W'];
+    } else if (random < 0.555556) {
+      selectedCombination = ['M', 'W', 'W'];
     }
-    // Two G + one other (12% total - 6 combinations, ~2% each)
-    else if (random < 0.7950) {
-      selectedCombination = ['G', 'G', 'W']; // ~2%
-    } else if (random < 0.8150) {
-      selectedCombination = ['G', 'G', 'M']; // ~2%
-    } else if (random < 0.8350) {
-      selectedCombination = ['G', 'W', 'G']; // ~2%
-    } else if (random < 0.8550) {
-      selectedCombination = ['W', 'G', 'G']; // ~2%
-    } else if (random < 0.8750) {
-      selectedCombination = ['G', 'M', 'G']; // ~2%
-    } else if (random < 0.8950) {
-      selectedCombination = ['M', 'G', 'G']; // ~2%
+    // Two G + one other (6 combinations)
+    else if (random < 0.592593) {
+      selectedCombination = ['G', 'G', 'W'];
+    } else if (random < 0.629630) {
+      selectedCombination = ['G', 'G', 'M'];
+    } else if (random < 0.666667) {
+      selectedCombination = ['G', 'W', 'G'];
+    } else if (random < 0.703704) {
+      selectedCombination = ['W', 'G', 'G'];
+    } else if (random < 0.740741) {
+      selectedCombination = ['G', 'M', 'G'];
+    } else if (random < 0.777778) {
+      selectedCombination = ['M', 'G', 'G'];
     }
-    // Two M + one other (10.5% total - 6 combinations, ~1.75% each)
-    else if (random < 0.9125) {
-      selectedCombination = ['M', 'M', 'W']; // ~1.75%
-    } else if (random < 0.9300) {
-      selectedCombination = ['M', 'M', 'G']; // ~1.75%
-    } else if (random < 0.9475) {
-      selectedCombination = ['M', 'W', 'M']; // ~1.75%
-    } else if (random < 0.9650) {
-      selectedCombination = ['W', 'M', 'M']; // ~1.75%
-    } else if (random < 0.9825) {
-      selectedCombination = ['M', 'G', 'M']; // ~1.75%
+    // Two M + one other (6 combinations)
+    else if (random < 0.814815) {
+      selectedCombination = ['M', 'M', 'W'];
+    } else if (random < 0.851852) {
+      selectedCombination = ['M', 'M', 'G'];
+    } else if (random < 0.888889) {
+      selectedCombination = ['M', 'W', 'M'];
+    } else if (random < 0.925926) {
+      selectedCombination = ['W', 'M', 'M'];
+    } else if (random < 0.962963) {
+      selectedCombination = ['M', 'G', 'M'];
     } else {
-      selectedCombination = ['G', 'M', 'M']; // ~1.75% (catch-all to ensure 100%)
+      selectedCombination = ['G', 'M', 'M'];
     }
     
     const timeDomain = this.generateTimeDomain('triplet', selectedCombination);
