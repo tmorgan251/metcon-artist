@@ -151,7 +151,7 @@ if (needsUpdate) {
 
 // Add service worker unregistration script immediately after opening body tag
 // This runs synchronously before any other scripts to prevent service workers from intercepting requests
-// First, remove any existing service worker unregistration scripts
+// First, remove any existing service worker unregistration scripts (handle multi-line)
 html = html.replace(/<!-- Unregister any old service workers[\s\S]*?<\/script>\s*/g, '');
 
 const unregisterScript = `  <!-- Unregister any old service workers to prevent caching issues -->
@@ -187,8 +187,8 @@ const unregisterScript = `  <!-- Unregister any old service workers to prevent c
     })();
   </script>
 `;
-// Insert right after <body> tag, before any other content
-html = html.replace(/<body>/, '<body>' + '\n' + unregisterScript);
+// Insert right after <body> tag, before any other content (handle whitespace)
+html = html.replace(/<body>\s*/m, '<body>\n' + unregisterScript);
 
 fs.writeFileSync(indexPath, html, 'utf8');
 console.log('Added service worker unregistration script at the top of body');
