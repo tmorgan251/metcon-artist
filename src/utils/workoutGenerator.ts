@@ -445,8 +445,8 @@ export class WorkoutGenerator {
   }
 
   private generateTripletWorkout(): Workout {
-    // Linchpin patterns: ~10-12% chance for chipper (reduced from 20%)
-    const isChipper = Math.random() < 0.12;
+    // Linchpin patterns: ~20% chance for chipper
+    const isChipper = Math.random() < 0.20;
     
     if (isChipper) {
       // Always for_time (user can choose to do for_time_or_not or not_for_time)
