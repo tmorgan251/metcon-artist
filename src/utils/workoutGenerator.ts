@@ -22,7 +22,7 @@ export class WorkoutGenerator {
     }
   }
 
-  private generateTimeDomain(structure: WorkoutStructure): TimeDomain {
+  private generateTimeDomain(structure: WorkoutStructure, modalities?: Modality[]): TimeDomain {
     const random = Math.random();
     
     switch (structure) {
@@ -33,13 +33,21 @@ export class WorkoutGenerator {
         return 'long';
       
       case 'couplet':
-        // Linchpin patterns: Short: 15%, Medium: 50%, Long: 35%
+        // If modalities provided, use modality-specific time domain probabilities
+        if (modalities && modalities.length === 2) {
+          return this.generateCoupletTimeDomain(modalities, random);
+        }
+        // Fallback to general couplet patterns: Short: 15%, Medium: 50%, Long: 35%
         if (random < 0.15) return 'short';
         if (random < 0.65) return 'medium';
         return 'long';
       
       case 'triplet':
-        // Linchpin patterns: Short: 5%, Medium: 45%, Long: 50%
+        // If modalities provided, use modality-specific time domain probabilities
+        if (modalities && modalities.length === 3) {
+          return this.generateTripletTimeDomain(modalities, random);
+        }
+        // Fallback to general triplet patterns: Short: 5%, Medium: 45%, Long: 50%
         if (random < 0.05) return 'short';
         if (random < 0.50) return 'medium';
         return 'long';
@@ -51,6 +59,137 @@ export class WorkoutGenerator {
       default:
         return 'medium';
     }
+  }
+
+  private generateCoupletTimeDomain(modalities: Modality[], random: number): TimeDomain {
+    const combo = modalities.join('');
+    
+    // Time domain probabilities by couplet combination based on Linchpin patterns
+    // Format: [short%, medium%, long%]
+    switch (combo) {
+      case 'WG':
+      case 'GW':
+        // Weightlifting + Gymnastics: Tends toward medium-long due to technical complexity
+        // Linchpin patterns: Short: 10%, Medium: 60%, Long: 30%
+        if (random < 0.10) return 'short';
+        if (random < 0.70) return 'medium';
+        return 'long';
+      
+      case 'WM':
+      case 'MW':
+        // Weightlifting + Monostructural: Balanced, monostructural paces the workout
+        // Linchpin patterns: Short: 20%, Medium: 55%, Long: 25%
+        if (random < 0.20) return 'short';
+        if (random < 0.75) return 'medium';
+        return 'long';
+      
+      case 'GM':
+      case 'MG':
+        // Gymnastics + Monostructural: Endurance-focused, tends longer
+        // Linchpin patterns: Short: 12%, Medium: 50%, Long: 38%
+        if (random < 0.12) return 'short';
+        if (random < 0.62) return 'medium';
+        return 'long';
+      
+      case 'WW':
+        // Pure Weightlifting: Shorter, strength-focused
+        // Linchpin patterns: Short: 30%, Medium: 60%, Long: 10%
+        if (random < 0.30) return 'short';
+        if (random < 0.90) return 'medium';
+        return 'long';
+      
+      case 'GG':
+        // Pure Gymnastics: Variable but often medium
+        // Linchpin patterns: Short: 25%, Medium: 55%, Long: 20%
+        if (random < 0.25) return 'short';
+        if (random < 0.80) return 'medium';
+        return 'long';
+      
+      case 'MM':
+        // Pure Monostructural: Rare, but when it occurs tends long
+        // Linchpin patterns: Short: 5%, Medium: 35%, Long: 60%
+        if (random < 0.05) return 'short';
+        if (random < 0.40) return 'medium';
+        return 'long';
+      
+      default:
+        // Fallback to general couplet patterns
+        if (random < 0.15) return 'short';
+        if (random < 0.65) return 'medium';
+        return 'long';
+    }
+  }
+
+  private generateTripletTimeDomain(modalities: Modality[], random: number): TimeDomain {
+    const combo = modalities.join('');
+    const hasW = modalities.includes('W');
+    const hasG = modalities.includes('G');
+    const hasM = modalities.includes('M');
+    
+    // Check if it's tri-modal (WGM in any order)
+    if (hasW && hasG && hasM) {
+      // Tri-modal (WGM): Most common, balanced but tends medium-long
+      // Linchpin patterns: Short: 3%, Medium: 48%, Long: 49%
+      if (random < 0.03) return 'short';
+      if (random < 0.51) return 'medium';
+      return 'long';
+    }
+    
+    // Two W + one other
+    if (modalities.filter(m => m === 'W').length === 2) {
+      // Two weightlifting + one other: Shorter due to heavy loading
+      // Linchpin patterns: Short: 8%, Medium: 55%, Long: 37%
+      if (random < 0.08) return 'short';
+      if (random < 0.63) return 'medium';
+      return 'long';
+    }
+    
+    // Two G + one other
+    if (modalities.filter(m => m === 'G').length === 2) {
+      // Two gymnastics + one other: Variable
+      // Linchpin patterns: Short: 7%, Medium: 48%, Long: 45%
+      if (random < 0.07) return 'short';
+      if (random < 0.55) return 'medium';
+      return 'long';
+    }
+    
+    // Two M + one other
+    if (modalities.filter(m => m === 'M').length === 2) {
+      // Two monostructural + one other: Longer due to endurance focus
+      // Linchpin patterns: Short: 2%, Medium: 38%, Long: 60%
+      if (random < 0.02) return 'short';
+      if (random < 0.40) return 'medium';
+      return 'long';
+    }
+    
+    // Pure combinations (WWW, GGG, MMM)
+    if (combo === 'WWW') {
+      // Pure Weightlifting: Short-medium
+      // Linchpin patterns: Short: 15%, Medium: 70%, Long: 15%
+      if (random < 0.15) return 'short';
+      if (random < 0.85) return 'medium';
+      return 'long';
+    }
+    
+    if (combo === 'GGG') {
+      // Pure Gymnastics: Medium
+      // Linchpin patterns: Short: 10%, Medium: 60%, Long: 30%
+      if (random < 0.10) return 'short';
+      if (random < 0.70) return 'medium';
+      return 'long';
+    }
+    
+    if (combo === 'MMM') {
+      // Pure Monostructural: Always long
+      // Linchpin patterns: Short: 0%, Medium: 20%, Long: 80%
+      if (random < 0.20) return 'medium';
+      return 'long';
+    }
+    
+    // Fallback to general triplet patterns
+    if (random < 0.05) return 'short';
+    if (random < 0.50) return 'medium';
+    return 'long';
   }
 
   private generateWorkoutType(modality: Modality, timeDomain: TimeDomain, structure: WorkoutStructure): WorkoutType {
@@ -293,7 +432,7 @@ export class WorkoutGenerator {
       selectedCombination = ['G', 'G']; // MM is 0% so we skip it and use GG as the catch-all
     }
     
-    const timeDomain = this.generateTimeDomain('couplet');
+    const timeDomain = this.generateTimeDomain('couplet', selectedCombination);
     const workoutType = this.generateWorkoutType(selectedCombination[0], timeDomain, 'couplet');
     
     return {
@@ -394,7 +533,7 @@ export class WorkoutGenerator {
       selectedCombination = ['G', 'M', 'M']; // ~1.75% (catch-all to ensure 100%)
     }
     
-    const timeDomain = this.generateTimeDomain('triplet');
+    const timeDomain = this.generateTimeDomain('triplet', selectedCombination);
     const workoutType = this.generateWorkoutType(selectedCombination[0], timeDomain, 'triplet');
     
     return {
